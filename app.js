@@ -18,7 +18,7 @@ var isTimeToShow = function(){
     var lasttime = new Date().getTime();
     return function(){
         var nowtime = new Date().getTime();
-        if(nowtime - lasttime > 1000){
+        if(nowtime - lasttime > 800){
             lasttime = nowtime;
             return true
         }
@@ -61,6 +61,7 @@ var lovewords = [
 
 twit.stream('statuses/filter', {'track': lovewords}, function (stream) {
     stream.on('data', function (data) {
+        if(data.text.substr(0,2) === "RT")return; // ignore retweet
         if(isTimeToShow()){
             json = {
                 created_at:data.created_at,
