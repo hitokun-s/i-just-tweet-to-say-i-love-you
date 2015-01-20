@@ -9,6 +9,7 @@ app.get("/love.json", function(req,res){
 //app.use(express.static(path.join(__dirname, 'public')));
 
 var json = {};
+var count = 0;
 
 app.listen(8080);
 
@@ -55,13 +56,14 @@ var lovewords = [
     "Ik hou van je" , // Dutch
     "Eu te amo" , // Portugal
     "Jag älskar dig" , // Sweden
-    "Minä rakastan sinua"  // Finland
-
+    "Minä rakastan sinua" // Finland
 ]
 
 twit.stream('statuses/filter', {'track': lovewords}, function (stream) {
     stream.on('data', function (data) {
         if(data.text.substr(0,2) === "RT")return; // ignore retweet
+        if(data.lang === "en" && data.text.search(/i love you/i) == -1)return
+        count++;
         if(isTimeToShow()){
             json = {
                 created_at:data.created_at,
@@ -70,8 +72,10 @@ twit.stream('statuses/filter', {'track': lovewords}, function (stream) {
                     screen_name:data.user.screen_name,
                     location:data.user.location,
                     profile_image_url:data.user.profile_image_url
-                }
+                },
+                new_tweet_count:count
             }
+            count = 0;
         }
     });
 });
