@@ -2,3 +2,4 @@
 .idea/
 twitter_keys.json
 *.iml
+node_modules/
